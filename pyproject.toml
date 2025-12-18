@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-shoe-tracker = "shoe_tracker.app:main"
+shoe-tracker = "shoe_tracker.cli:main"
 
 [build-system]
 requires = ["setuptools>=68.0"]

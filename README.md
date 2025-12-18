@@ -68,12 +68,12 @@ FLASK_PORT=5000
 
 1. Start the Flask application:
 ```bash
-python -m shoe_tracker.app
+python -m shoe_tracker.cli web
 ```
 
-Or use the CLI command:
+Or directly:
 ```bash
-shoe-tracker
+python -m shoe_tracker.app
 ```
 
 2. Open your browser and navigate to:
@@ -88,6 +88,76 @@ http://localhost:5000
    - Recent weekly reports
    - Recent monthly reports
    - Yearly statistics
+
+### Using the Command-Line Interface (CLI)
+
+The CLI provides a convenient way to generate reports without using the web interface.
+
+**View available commands:**
+```bash
+python -m shoe_tracker.cli --help
+```
+
+**Start the web server:**
+```bash
+python -m shoe_tracker.cli web
+python -m shoe_tracker.cli web --port 8080  # Custom port
+```
+
+**Generate reports** (requires STRAVA_ACCESS_TOKEN in .env):
+```bash
+# Overall shoe summary
+python -m shoe_tracker.cli report summary
+
+# Weekly report
+python -m shoe_tracker.cli report weekly
+
+# Monthly report
+python -m shoe_tracker.cli report monthly
+
+# Yearly report
+python -m shoe_tracker.cli report yearly
+
+# All activities
+python -m shoe_tracker.cli report activities
+
+# Filter by time period (last 180 days)
+python -m shoe_tracker.cli report monthly --days 180
+
+# Filter by specific shoe
+python -m shoe_tracker.cli report activities --shoe-id g12345678
+```
+
+### Programmatic Usage
+
+See the `examples/basic_usage.py` file for a complete example of how to use the library programmatically:
+
+```bash
+python examples/basic_usage.py
+```
+
+Example code:
+```python
+from shoe_tracker.strava_client import StravaClient
+from shoe_tracker.analyzer import ActivityAnalyzer
+from datetime import datetime, timedelta
+
+# Initialize client
+client = StravaClient(access_token="your_token")
+
+# Fetch activities
+after = datetime.now() - timedelta(days=90)
+activities = client.get_activities(after=after)
+
+# Get gear info
+gear = client.get_athlete_gear()
+gear_info = {g['id']: g['name'] for g in gear}
+
+# Analyze
+analyzer = ActivityAnalyzer(activities)
+summary = analyzer.get_shoe_summary(gear_info)
+weekly = analyzer.get_weekly_report(gear_info)
+```
 
 ### Navigating the Application
 
