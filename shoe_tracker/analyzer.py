@@ -1,16 +1,16 @@
 """Data analyzer for processing Strava activities and generating reports."""
 
 from datetime import datetime, timedelta
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Union
 from collections import defaultdict
 import pandas as pd
-from stravalib.model import Activity
+from stravalib.strava_model import SummaryActivity, DetailedActivity
 
 
 class ActivityAnalyzer:
     """Analyzes Strava activities and generates shoe-based reports."""
     
-    def __init__(self, activities: List[Activity]):
+    def __init__(self, activities: List[Union[SummaryActivity, DetailedActivity]]):
         """
         Initialize the analyzer with activities.
         
@@ -26,14 +26,15 @@ class ActivityAnalyzer:
         
         for activity in self.activities:
             # Extract relevant fields
+            # In stravalib v2, moving_time and elapsed_time are int (seconds) instead of timedelta
             record = {
                 'id': activity.id,
                 'name': activity.name,
                 'type': str(activity.type) if activity.type else 'Unknown',
                 'date': activity.start_date_local,
                 'distance_km': float(activity.distance) / 1000 if activity.distance else 0.0,
-                'moving_time_hours': float(activity.moving_time.total_seconds()) / 3600 if activity.moving_time else 0.0,
-                'elapsed_time_hours': float(activity.elapsed_time.total_seconds()) / 3600 if activity.elapsed_time else 0.0,
+                'moving_time_hours': float(activity.moving_time) / 3600 if activity.moving_time else 0.0,
+                'elapsed_time_hours': float(activity.elapsed_time) / 3600 if activity.elapsed_time else 0.0,
                 'elevation_gain_m': float(activity.total_elevation_gain) if activity.total_elevation_gain else 0.0,
                 'gear_id': activity.gear_id if hasattr(activity, 'gear_id') and activity.gear_id else None,
             }

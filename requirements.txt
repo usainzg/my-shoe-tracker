@@ -1,4 +1,4 @@
-stravalib==1.6.0
+stravalib>=2.0
 python-dotenv==1.0.0
 pandas==2.1.4
 flask==3.0.0

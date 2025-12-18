@@ -2,9 +2,9 @@
 
 import os
 from datetime import datetime, timedelta
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Union
 from stravalib import Client
-from stravalib.model import Activity
+from stravalib.strava_model import SummaryActivity, DetailedActivity
 
 
 class StravaClient:
@@ -39,12 +39,17 @@ class StravaClient:
             client_secret=client_secret,
             code=code
         )
-        self.access_token = token_response['access_token']
+        # In stravalib v2, exchange_code_for_token returns AccessInfo or tuple
+        # We only need the AccessInfo part
+        if isinstance(token_response, tuple):
+            token_response = token_response[0]
+            
+        self.access_token = token_response.access_token
         self.client.access_token = self.access_token
         return {
-            'access_token': token_response['access_token'],
-            'refresh_token': token_response['refresh_token'],
-            'expires_at': token_response['expires_at']
+            'access_token': token_response.access_token,
+            'refresh_token': token_response.refresh_token,
+            'expires_at': token_response.expires_at
         }
     
     def refresh_access_token(self, client_id: int, client_secret: str, refresh_token: str) -> Dict[str, str]:
@@ -64,15 +69,16 @@ class StravaClient:
             client_secret=client_secret,
             refresh_token=refresh_token
         )
-        self.access_token = token_response['access_token']
+        # In stravalib v2, refresh_access_token returns AccessInfo
+        self.access_token = token_response.access_token
         self.client.access_token = self.access_token
         return {
-            'access_token': token_response['access_token'],
-            'refresh_token': token_response['refresh_token'],
-            'expires_at': token_response['expires_at']
+            'access_token': token_response.access_token,
+            'refresh_token': token_response.refresh_token,
+            'expires_at': token_response.expires_at
         }
     
-    def get_activities(self, after: Optional[datetime] = None, before: Optional[datetime] = None, limit: int = 200) -> List[Activity]:
+    def get_activities(self, after: Optional[datetime] = None, before: Optional[datetime] = None, limit: int = 200) -> List[Union[SummaryActivity, DetailedActivity]]:
         """
         Fetch activities from Strava.
         
@@ -93,7 +99,7 @@ class StravaClient:
         
         return activities
     
-    def get_activity_details(self, activity_id: int) -> Activity:
+    def get_activity_details(self, activity_id: int) -> DetailedActivity:
         """
         Get detailed information for a specific activity.
         
