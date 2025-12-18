@@ -5,7 +5,7 @@ description = "A Strava shoe tracking application that analyzes activities and g
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
-    "stravalib>=1.6.0",
+    "stravalib>=2.0",
     "python-dotenv>=1.0.0",
     "pandas>=2.1.4",
     "flask>=3.0.0",
