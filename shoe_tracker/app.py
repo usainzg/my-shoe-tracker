@@ -1,6 +1,7 @@
 """Flask web application for My Shoe Tracker."""
 
 import os
+import secrets
 from datetime import datetime, timedelta
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from dotenv import load_dotenv
@@ -11,7 +12,15 @@ from shoe_tracker.analyzer import ActivityAnalyzer
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv('FLASK_SECRET_KEY', 'dev-secret-key-change-in-production')
+
+# Get secret key from environment or generate a random one for development
+secret_key = os.getenv('FLASK_SECRET_KEY')
+if not secret_key:
+    # Generate a random secret key for development
+    secret_key = secrets.token_hex(32)
+    print("WARNING: Using a randomly generated secret key. Set FLASK_SECRET_KEY in .env for production.")
+
+app.secret_key = secret_key
 
 # Strava OAuth settings
 STRAVA_CLIENT_ID = os.getenv('STRAVA_CLIENT_ID')
@@ -51,10 +60,10 @@ def index():
         
         return render_template('index.html',
                              authenticated=True,
-                             shoe_summary=shoe_summary.to_html(classes='table table-striped', index=False) if not shoe_summary.empty else None,
-                             weekly_report=weekly_report.to_html(classes='table table-striped', index=False) if not weekly_report.empty else None,
-                             monthly_report=monthly_report.to_html(classes='table table-striped', index=False) if not monthly_report.empty else None,
-                             yearly_report=yearly_report.to_html(classes='table table-striped', index=False) if not yearly_report.empty else None,
+                             shoe_summary=shoe_summary.to_html(classes='table table-striped', index=False, escape=True) if not shoe_summary.empty else None,
+                             weekly_report=weekly_report.to_html(classes='table table-striped', index=False, escape=True) if not weekly_report.empty else None,
+                             monthly_report=monthly_report.to_html(classes='table table-striped', index=False, escape=True) if not monthly_report.empty else None,
+                             yearly_report=yearly_report.to_html(classes='table table-striped', index=False, escape=True) if not yearly_report.empty else None,
                              activity_count=len(activities),
                              gear_count=len(gear_list))
     except Exception as e:
@@ -143,7 +152,7 @@ def weekly_report():
         
         return render_template('report.html',
                              title='Weekly Report',
-                             report=report.to_html(classes='table table-striped', index=False) if not report.empty else None)
+                             report=report.to_html(classes='table table-striped', index=False, escape=True) if not report.empty else None)
     except Exception as e:
         flash(f'Error generating report: {str(e)}', 'error')
         return redirect(url_for('index'))
@@ -171,7 +180,7 @@ def monthly_report():
         
         return render_template('report.html',
                              title='Monthly Report',
-                             report=report.to_html(classes='table table-striped', index=False) if not report.empty else None)
+                             report=report.to_html(classes='table table-striped', index=False, escape=True) if not report.empty else None)
     except Exception as e:
         flash(f'Error generating report: {str(e)}', 'error')
         return redirect(url_for('index'))
@@ -199,7 +208,7 @@ def yearly_report():
         
         return render_template('report.html',
                              title='Yearly Report',
-                             report=report.to_html(classes='table table-striped', index=False) if not report.empty else None)
+                             report=report.to_html(classes='table table-striped', index=False, escape=True) if not report.empty else None)
     except Exception as e:
         flash(f'Error generating report: {str(e)}', 'error')
         return redirect(url_for('index'))

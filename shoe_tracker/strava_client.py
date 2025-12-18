@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 from stravalib import Client
 from stravalib.model import Activity
-import requests
 
 
 class StravaClient:
