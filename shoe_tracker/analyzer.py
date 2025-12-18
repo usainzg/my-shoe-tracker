@@ -15,7 +15,7 @@ class ActivityAnalyzer:
         Initialize the analyzer with activities.
         
         Args:
-            activities: List of Strava Activity objects
+            activities: List of SummaryActivity or DetailedActivity objects
         """
         self.activities = activities
         self.df = self._activities_to_dataframe()

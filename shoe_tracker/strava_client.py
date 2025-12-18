@@ -88,7 +88,7 @@ class StravaClient:
             limit: Maximum number of activities to return
             
         Returns:
-            List of Activity objects
+            List of SummaryActivity or DetailedActivity objects
         """
         if not self.access_token:
             raise ValueError("No access token available. Please authorize first.")
@@ -107,7 +107,7 @@ class StravaClient:
             activity_id: The ID of the activity
             
         Returns:
-            Detailed Activity object
+            DetailedActivity object
         """
         if not self.access_token:
             raise ValueError("No access token available. Please authorize first.")
