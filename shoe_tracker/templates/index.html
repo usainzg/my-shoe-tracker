@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if not authenticated %}
+<div class="hero">
+    <div class="container text-center">
+        <h1 class="display-4 mb-4">Welcome to My Shoe Tracker</h1>
+        <p class="lead mb-4">
+            Track your running shoes and analyze your Strava activities.<br>
+            Get insights on distance, time, and elevation for each pair of shoes.
+        </p>
+        <a href="{{ url_for('login') }}" class="btn btn-light btn-lg">
+            <svg width="20" height="20" viewBox="0 0 20 20" style="vertical-align: middle; margin-right: 8px;">
+                <path fill="#FC4C02" d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+            </svg>
+            Connect with Strava
+        </a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3>📊 Analyze</h3>
+                    <p>Track distance, time, and elevation for each pair of shoes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3>📅 Reports</h3>
+                    <p>Weekly, monthly, and yearly reports for all your activities</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3>👟 Track Shoes</h3>
+                    <p>Monitor wear and tear on each pair of running shoes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="hero">
+    <div class="container text-center">
+        <h1 class="display-4 mb-4">Your Shoe Tracker Dashboard</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ activity_count }}</div>
+                    <div class="stat-label">Activities Analyzed</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ gear_count }}</div>
+                    <div class="stat-label">Shoes Tracked</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    {% if error %}
+    <div class="alert alert-danger">
+        <strong>Error:</strong> {{ error }}
+    </div>
+    {% endif %}
+
+    {% if shoe_summary %}
+    <div class="report-card">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">📊 Overall Shoe Summary</h4>
+            </div>
+            <div class="card-body">
+                {{ shoe_summary | safe }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if weekly_report %}
+    <div class="report-card">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">📅 Recent Weekly Report (Last 10 Weeks)</h4>
+            </div>
+            <div class="card-body">
+                {{ weekly_report | safe }}
+                <a href="{{ url_for('weekly_report') }}" class="btn btn-info mt-3">View Full Weekly Report</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if monthly_report %}
+    <div class="report-card">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">📆 Recent Monthly Report (Last 6 Months)</h4>
+            </div>
+            <div class="card-body">
+                {{ monthly_report | safe }}
+                <a href="{{ url_for('monthly_report') }}" class="btn btn-success mt-3">View Full Monthly Report</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if yearly_report %}
+    <div class="report-card">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">📈 Yearly Report</h4>
+            </div>
+            <div class="card-body">
+                {{ yearly_report | safe }}
+                <a href="{{ url_for('yearly_report') }}" class="btn btn-warning mt-3">View Full Yearly Report</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if not shoe_summary and not error %}
+    <div class="alert alert-info">
+        <strong>No activities found.</strong> Make sure you have activities with shoes assigned in Strava.
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,21 @@
+[project]
+name = "my-shoe-tracker"
+version = "0.1.0"
+description = "A Strava shoe tracking application that analyzes activities and generates reports"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "stravalib>=1.6.0",
+    "python-dotenv>=1.0.0",
+    "pandas>=2.1.4",
+    "flask>=3.0.0",
+    "requests>=2.31.0",
+    "matplotlib>=3.8.2",
+]
+
+[project.scripts]
+shoe-tracker = "shoe_tracker.app:main"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
